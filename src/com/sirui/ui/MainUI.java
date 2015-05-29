@@ -12,10 +12,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -52,7 +50,7 @@ public class MainUI extends JFrame {
 	private String basePath;
 	private static boolean flag = true;
 	private JPanel mPanel;
-	private FilenameFilter fileFilter;
+
 	static {
 		prop = new Properties();
 		try {
@@ -66,16 +64,6 @@ public class MainUI extends JFrame {
 	}
 
 	public MainUI() {
-		fileFilter = new FilenameFilter(){
-			@Override
-			public boolean accept(File dir, String name) {
-				if (name.startsWith(".")) {
-					return false;
-				}
-				return true;
-			}
-			
-		};
 		loadBoxData();
 		setSize(new Dimension(1000, 700));
 		setTitle("工作笔记");
@@ -101,7 +89,7 @@ public class MainUI extends JFrame {
 		if (!f.exists()) {
 			f.mkdirs();
 		}
-		boxData = f.list(fileFilter);
+		boxData = f.list();
 	}
 
 	public void addTop() {
@@ -144,7 +132,7 @@ public class MainUI extends JFrame {
 
 	public void addLeft() {
 		JPanel mPanel = new JPanel();
-		int width = 250;
+		int width = 200;
 
 		mPanel.setPreferredSize(new Dimension(width, 0));
 		mPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -190,11 +178,11 @@ public class MainUI extends JFrame {
 	private void readLoadComBox(JComboBox comBox) {
 		comBox.setModel(new DefaultComboBoxModel(boxData));
 	}
-	
+
 	private void readloadJList() {
 		File f = new File(basePath);
 		if (f.isDirectory()) {
-			model = new DefaultComboBoxModel<String>(f.list(fileFilter));
+			model = new DefaultComboBoxModel<String>(f.list());
 			leftList.setModel(model);
 		}
 	}
