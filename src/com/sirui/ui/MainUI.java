@@ -12,8 +12,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -50,7 +52,20 @@ public class MainUI extends JFrame {
 	private String basePath;
 	private static boolean flag = true;
 	private JPanel mPanel;
+	private FilenameFilter fileFilter = new FilenameFilter() {
 
+		@Override
+		public boolean accept(File dir, String name) {
+			if (name.endsWith(".jar")) {
+				return false;
+			} else if (name.startsWith(".")) {
+				return false;
+			}
+			return true;
+		}
+		
+	};
+	
 	static {
 		prop = new Properties();
 		try {
@@ -72,7 +87,12 @@ public class MainUI extends JFrame {
 		setLocationRelativeTo(getOwner());
 		setLayout(new BorderLayout(5, 5));
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			String os = System.getProperty("os.name");
+			if ("Linux".equals(os)) {
+				UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+			} else {
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			}
 		} catch (Exception e) {
 		}
 		addTop();
@@ -89,7 +109,7 @@ public class MainUI extends JFrame {
 		if (!f.exists()) {
 			f.mkdirs();
 		}
-		boxData = f.list();
+		boxData = f.list(fileFilter);
 	}
 
 	public void addTop() {
